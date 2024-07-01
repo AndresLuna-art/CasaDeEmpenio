@@ -1,0 +1,227 @@
+﻿@{
+    ViewData["Title"] = "Registro de Productos";
+}
+
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet" href="~/adminlte/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+<link rel="stylesheet" href="~/path/to/toastr.min.css">
+@section Scripts {
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="@Url.Content("~/adminlte/plugins/moment/moment.min.js")"></script>
+    <script src="@Url.Content("~/adminlte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js")"></script>
+    <script src="@Url.Content("~/adminlte/plugins/bootstrap-switch/js/bootstrap-switch.min.js")"></script>
+    <script src="@Url.Content("~/adminlte/plugins/jquery-validation/jquery.validate.min.js")"></script>
+    <script src="~/path/to/toastr.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function calcularFechaVencimiento() {
+                var tiempo = parseInt($('#tiempo').val());
+                var unidad = $('#unidad').val();
+
+                var fechaIngreso = moment();
+
+                var fechaVencimiento = fechaIngreso.add(tiempo, unidad);
+
+                $('#spanFechaVencimiento').text(fechaVencimiento.format('DD-MM-YYYY HH:mm:ss'));
+                $('#fechaVencimientoHidden').val(fechaVencimiento.format('DD-MM-YYYY HH:mm:ss'));
+            }
+
+            calcularFechaVencimiento();
+
+            $('#calcular').click(function () {
+                calcularFechaVencimiento();
+            });
+
+            $('#tiempo, #unidad').change(function () {
+                calcularFechaVencimiento();
+            });
+
+            $("#ProductForm").validate({
+                rules: {
+                    TipoProducto: 'required',
+                    NombreProducto: 'required',
+                    EstadoProducto: 'required',
+                    ValorCalculado: {
+                        required: true,
+                        number: true,
+                        min: 0.01
+                    },
+                },
+                messages: {
+                    TipoProducto: { required: "Por favor selecciona el tipo de producto" },
+                    NombreProducto: { required: "Por favor ingresa el nombre del producto" },
+                    EstadoProducto: { required: "Por favor selecciona el estado del producto" },
+                    ValorCalculado: {
+                        required: "Por favor ingresa el valor calculado del producto",
+                        number: "Por favor ingresa un número válido",
+                        min: "El valor calculado debe ser mayor que cero"
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function (form) {
+                    $.ajax({
+                        url: '@Url.Action("Add", "Productos")',
+                        type: 'POST',
+                        data: $(form).serialize(),
+                        success: function (response) {
+                            if (response.success) {
+                                var successMessage = '@(TempData["SuccessMessage"] as string)';
+                                var toastType = '@(TempData["ToastType"] as string)';
+
+                                if (successMessage && toastType === "success") {
+                                    toastr.success(successMessage);
+                                } else if (successMessage && toastType === "error") {
+                                    toastr.error(successMessage);
+                                }
+
+                                setTimeout(function () {
+                                    window.location.href = '@Url.Action("Index", "Productos")';
+                                }, 3000);
+                            } else {
+                                console.error('Error al guardar el producto.');
+                            }
+                        },
+                        error: function () {
+                            console.error('Error de red al intentar guardar el producto.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Registro de Producto</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">
+                        @Html.ActionLink("Inicio", "Index", "Home")
+                    </li>
+                    <li class="breadcrumb-item">
+                        @Html.ActionLink("Listado de Productos", "Index", "Productos")
+                    </li>
+                    <li class="breadcrumb-item">Registro de Producto</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card card-secondary mt-2">
+            <div class="card-header">
+                <h3 class="card-title">Registrar Producto</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- SECCION FORMULARIO -->
+                @using (Html.BeginForm("Add", "Productos", FormMethod.Post, new { @class = "needs-validation", @id = "ProductForm", @novalidate = "novalidate" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                @Html.Label("TipoProducto", "Selecciona el tipo de producto:")
+                                @Html.DropDownList("TipoProducto", ViewBag.TipoProducto as SelectList, new { @class = "form-control select2 select2-danger", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                @Html.Label("NombreProducto", "Nombre del producto:")
+                                @Html.TextBox("NombreProducto", "", new { @class = "form-control", @type = "text", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                @Html.Label("EstadoProducto", "Selecciona el estado del producto:")
+                                @Html.DropDownList("EstadoProducto", ViewBag.EstadoProducto as SelectList, new { @class = "form-control select2 select2-danger", @required = "required" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <div>
+                                    <label>Fecha y hora de ingreso:</label><br>
+                                    <span id="spanFechaActual">@DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")</span>
+                                </div>
+                                <input type="hidden" id="FechaIngreso" name="FechaIngreso" value="@DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                @Html.Label("ValorCalculado", "Valor calculado del producto:")
+                                @Html.TextBox("ValorCalculado", "", new { @class = "form-control", @type = "number", @min = "1", @step = "0.01", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Fecha de Vencimiento de Devolución:</label>
+                                <div>
+                                    <span id="spanFechaVencimiento"></span>
+                                    <input type="hidden" id="fechaVencimientoHidden" name="FechaVencimientoDevolucion" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-left">
+                            <a href="@Url.Action("Index", "Productos")" class="btn btn-secondary mt-3"><i class="fas fa-times"></i> Cancelar</a>
+                            <button type="submit" class="btn btn-success mt-3"><i class="fas fa-save"></i> Guardar</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="card card-secondary mt-2">
+            <div class="card-header">
+                <h3 class="card-title">Configurar tiempo de estancia del producto</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-2">
+                        @Html.Label("tiempo", "Cantidad de tiempo:")
+                        @Html.TextBox("tiempo", 30, new { @type = "number", @class = "form-control", @min = "1", @step = "1" })
+                    </div>
+                    <div class="col-2">
+                        @Html.Label("unidad", "Unidad de tiempo:")
+                        @Html.DropDownList("unidad", new SelectList(new[]
+                        {
+                        new SelectListItem { Text = "Días", Value = "days" },
+                        new SelectListItem { Text = "Horas", Value = "hours" },
+                        new SelectListItem { Text = "Minutos", Value = "minutes" },
+                        new SelectListItem { Text = "Segundos", Value = "seconds" }
+                        }, "Value", "Text"), new { @class = "form-control" })
+                    </div>
+                    <div class="col-2 align-self-end">
+                        <button type="button" class="btn btn-primary mt-3" id="calcular">Calcular</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

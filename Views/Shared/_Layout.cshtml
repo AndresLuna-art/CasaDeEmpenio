@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CasaDeEmpeño</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/plugins/fontawesome-free/css/all.min.css")">
+     <!-- Theme style -->
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/dist/css/adminlte.min.css")">
+    <!-- OverlayScrollbars -->
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css")">
+    <!-- Sweet alert -->
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css")">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/plugins/select2/css/select2.min.css")">
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css")">
+    <!-- Custom -->
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/dist/css/custom.css")">
+    <!-- IonIcons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/plugins/toastr/toastr.css")"/>
+
+    <!-- Scripts -->
+    <!-- JQuery -->
+    <script src="@Url.Content("~/adminlte/plugins/jquery/jquery.min.js")"></script>
+    <script src="@Url.Content("~/adminlte/plugins/jquery-ui/jquery-ui.min.js")"></script>
+    <!-- JQuery Validate -->
+    <script src="@Url.Content("~/adminlte/plugins/jquery-validation/jquery.validate.min.js")"></script>
+    <script src="@Url.Content("~/adminlte/plugins/jquery-validation/additional-methods.min.js")"></script>
+    <!-- Sweet alert -->
+    <script src="@Url.Content("~/adminlte/plugins/sweetalert2/sweetalert2.min.js")"></script>
+    <!-- Select2 -->
+    <script src="@Url.Content("~/adminlte/plugins/select2/js/select2.full.min.js")"></script>
+
+</head>
+<body class="hold-transition layout-fixed">
+    <div class="wrapper">
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i> Menú</a>
+                </li>
+            </ul>
+        </nav>
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a href="/home" class="brand-link header-menu-slide">
+                <img src="~/adminlte/dist/img/casadeempeño-logo.png" alt="Logo" class="elevation-3 img-menu-slide-custom" style="opacity: .8; width: 14rem !important;">
+            </a>
+            <div class="sidebar">
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">
+                        <img src="~/adminlte/dist/img/user8-128x128.jpg" class="img-circle elevation-2" alt="User Image">
+                    </div>
+                    <div class="info">
+                        <label class="d-block text-light">Andres Luna</label>
+                    </div>
+                </div>
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index", "Home")" class="nav-link">
+                                <i class="nav-icon fas fa-home"></i>
+                                <p>Home</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-box"></i>
+                                <p>
+                                    Productos
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Add", "Productos")" class="nav-link">
+                                        <i class="fas fa-plus-circle nav-icon"></i>
+                                        <p>Agregar</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index", "Productos")" class="nav-link">
+                                        <i class="fas fa-cube nav-icon"></i>
+                                        <p>Lista Artículos</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index", "Devoluciones")" class="nav-link">
+                                <i class="nav-icon fas fa-undo"></i>
+                                <p>Devolución</p>
+                                <i class="right fas fa-angle-left"></i>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Add", "Devoluciones")" class="nav-link">
+                                        <i class="fas fa-exchange-alt nav-icon"></i>
+                                        <p>Procesar devolución</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index", "Devoluciones")" class="nav-link">
+                                        <i class="fas fa-list-alt nav-icon"></i>
+                                        <p>Lista de devoluciones</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index", "Ofertas")" class="nav-link">
+                                <i class="fas fa-hand-holding-usd"></i>
+                                <p>Ofertas</p>
+                                <i class="right fas fa-angle-left"></i>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Add", "Ofertas")" class="nav-link">
+                                        <i class="fas fa-tags nav-icon"></i>
+                                        <p>Registar Oferta</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index", "Ofertas")" class="nav-link">
+                                        <i class="fas fa-boxes nav-icon"></i>
+                                        <p>Lista de ofertas</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Logout", "Login")" class="nav-link">
+                                <i class="fas fa-sign-out-alt"></i>&nbsp;Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+        <div class="content-wrapper">
+                @RenderBody()
+        </div>
+    </div>
+    <!-- Bootstrap 4 -->
+    <script src="@Url.Content("~/adminlte/plugins/bootstrap/js/bootstrap.bundle.js")"></script>
+    <!-- OverlayScrollbars -->
+    <script src="@Url.Content("~/adminlte/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js")"></script>
+    <!--  AdminLTE App -->
+    <script src="@Url.Content("~/adminlte/dist/js/adminlte.min.js")"></script>
+    <script src="@Url.Content("~/adminlte/plugins/toastr/toastr.min.js")"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

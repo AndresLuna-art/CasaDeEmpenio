@@ -1,0 +1,127 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CasaDeEmpeño</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/plugins/fontawesome-free/css/all.min.css")">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/dist/css/adminlte.min.css")">
+    <!-- OverlayScrollbars -->
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css")">
+    <!-- Sweet alert -->
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css")">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/plugins/select2/css/select2.min.css")">
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css")">
+    <!-- Custom -->
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/dist/css/custom.css")">
+    <!-- IonIcons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="@Url.Content("~/adminlte/plugins/toastr/toastr.css")" />
+
+    <!-- Scripts -->
+    <!-- JQuery -->
+    <script src="@Url.Content("~/adminlte/plugins/jquery/jquery.min.js")"></script>
+    <script src="@Url.Content("~/adminlte/plugins/jquery-ui/jquery-ui.min.js")"></script>
+    <!-- JQuery Validate -->
+    <script src="@Url.Content("~/adminlte/plugins/jquery-validation/jquery.validate.min.js")"></script>
+    <script src="@Url.Content("~/adminlte/plugins/jquery-validation/additional-methods.min.js")"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <!-- Sweet alert -->
+    <script src="@Url.Content("~/adminlte/plugins/sweetalert2/sweetalert2.min.js")"></script>
+    <!-- Select2 -->
+    <script src="@Url.Content("~/adminlte/plugins/select2/js/select2.full.min.js")"></script>
+
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="#"><b>LOGIN</b></a>
+        </div>
+        <div class="card">
+            <div class="card-body login-card-body">
+                <p class="login-box-msg">Iniciar Sesión</p>
+                @using (Html.BeginForm("Index", "Login", FormMethod.Post, new { @class = "needs-validation", @id = "LoginForm", @novalidate = "novalidate" }))
+                {
+                    <div class="input-group mb-3">
+                        <input type="text" name="username" class="form-control" placeholder="Username" required>
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" name="password" class="form-control" placeholder="Password" required>
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 text-center">
+                            <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <script>
+        
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="@Url.Content("~/adminlte/plugins/bootstrap/js/bootstrap.bundle.js")"></script>
+    <!-- OverlayScrollbars -->
+    <script src="@Url.Content("~/adminlte/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js")"></script>
+    <!--  AdminLTE App -->
+    <script src="@Url.Content("~/adminlte/dist/js/adminlte.min.js")"></script>
+    <script src="@Url.Content("~/adminlte/plugins/toastr/toastr.min.js")"></script>
+</body>
+<script>
+    $(document).ready(function () {
+        $("#LoginForm").validate({
+            rules: {
+                username: 'required',
+                password: 'required',
+            },
+            messages: {
+                username: { required: "Por favor ingresa el nombre de usuario" },
+                password: { required: "Por favor ingresa tu contraseña" },
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
+        $('#loginForm').on('submit', function (event) {
+            event.preventDefault();
+
+            var username = $('#username').val();
+            var password = $('#password').val();
+
+            var encryptedPassword = CryptoJS.AES.encrypt(password, 'supersecretkeythatneedstobelonger').toString();
+            $('#password').val(encryptedPassword);
+            this.submit();
+        });
+    });
+</script>
+</html>

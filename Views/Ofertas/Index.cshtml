@@ -1,0 +1,118 @@
+﻿@model IEnumerable<ProductoViewModel>
+@{
+    ViewData["Title"] = "Productos con Ofertas";
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 font-weight-bold"><i class="fas fa-hand-holding-usd"></i>&nbsp; Productos con Ofertas</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">
+                        @Html.ActionLink("Inicio", "Index", "Home")
+                    </li>
+                    <li class="breadcrumb-item active">Productos con Ofertas</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+
+            @foreach (var producto in Model)
+            {
+                var mejorOferta = producto.Ofertas.FirstOrDefault(o => o.EsMejorOferta);
+
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>@producto.NombreProducto</h4>
+                            <p>Valor Calculado: @producto.ValorCalculado.ToString("C")</p>
+                        </div>
+                        <div class="card-body">
+                            <h5>Ofertas</h5>
+
+                            @if (mejorOferta != null)
+                            {
+                                <div class="card bg-success text-white mb-2">
+                                    <div class="card-body">
+                                        <h6 class="card-title">@mejorOferta.NombreOfertante</h6>
+                                        <p class="card-text">Teléfono: @mejorOferta.NumeroCelular</p>
+                                        <p class="card-text">Monto Oferta: @mejorOferta.MontoOferta.ToString("C")</p>
+                                        <p class="card-text">Fecha Oferta: @mejorOferta.FechaOferta.ToString("dd/MM/yyyy")</p>
+                                        <button class="btn btn-light" onclick="marcarVendido(@producto.ProductoID, @mejorOferta.OfertaID)">Vender a este ofertante</button>
+                                    </div>
+                                </div>
+                            }
+
+                            @foreach (var oferta in producto.Ofertas)
+                            {
+                                if (!oferta.EsMejorOferta)
+                                {
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <h6 class="card-title">@oferta.NombreOfertante</h6>
+                                            <p class="card-text">Teléfono: @oferta.NumeroCelular</p>
+                                            <p class="card-text">Monto Oferta: @oferta.MontoOferta.ToString("C")</p>
+                                            <p class="card-text">Fecha Oferta: @oferta.FechaOferta.ToString("dd/MM/yyyy")</p>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</section>
+
+<!-- DataTables & Plugins -->
+<script src="@Url.Content("~/adminlte/plugins/datatables/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js")"></script>
+<script src="@Url.Content("~/adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js")"></script>
+<script src="@Url.Content("~/adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js")"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.table').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "pageLength": 5,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
+            }
+        });
+    });
+</script>
+<script>
+    function marcarVendido(productoID, ofertaID) {
+        if (confirm("¿Está seguro de que desea marcar este producto como vendido?")) {
+            $.ajax({
+                url: '@Url.Action("VenderProducto", "Productos")',
+                type: 'POST',
+                data: { ProductoID: productoID, OfertaID: ofertaID },
+                success: function (result) {
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert(result.message);
+                    }
+                }
+            });
+        }
+    }
+
+</script>

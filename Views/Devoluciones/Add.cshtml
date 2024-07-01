@@ -1,0 +1,155 @@
+﻿@{
+    ViewData["Title"] = "Procesar devolución";
+}
+
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet" href="~/adminlte/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+
+@section Scripts {
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="~/adminlte/plugins/moment/moment.min.js"></script>
+    <script src="~/adminlte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="~/adminlte/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+    <script src="~/adminlte/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $.validator.addMethod("validProducto", function (value, element) {
+                return value != "0";
+            }, "Por favor selecciona el producto");
+
+            $("#DevolucionForm").validate({
+                rules: {
+                    ProductoID: {
+                        validProducto: true,
+                        required: true
+                    },
+                    Comentario: 'required',
+                },
+                messages: {
+                    ProductoID: { required: "Por favor selecciona el producto" },
+                    Comentario: { required: "Por favor ingresa una descripción" },
+                },
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+
+            // Configuración de Toast con Toastr y Swal
+            var Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
+            // Manejo del evento submit del formulario
+            $('#DevolucionForm').submit(function (event) {
+                event.preventDefault();
+
+                if ($("#DevolucionForm").valid()) {
+                    $.ajax({
+                        url: '@Url.Action("Add", "Devoluciones")',
+                        type: 'POST',
+                        data: $(this).serialize(),
+                        success: function (response) {
+                            if (response.success) {
+                                toastr.success(response.message);
+                                setTimeout(function () {
+                                    window.location.href = '@Url.Action("Index", "Devoluciones")';
+                                }, 2000);
+                            } else {
+                                toastr.error(response.message);
+                            }
+                        },
+                        error: function () {
+                            toastr.error("Ocurrió un error inesperado. Por favor, inténtelo de nuevo.");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Procesar devolución</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">
+                        @Html.ActionLink("Inicio", "Index", "Home")
+                    </li>
+                    <li class="breadcrumb-item">
+                        @Html.ActionLink("Listado de Productos devueltos", "Index", "Devoluciones")
+                    </li>
+                    <li class="breadcrumb-item">Procesar devolución</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card card-secondary mt-2">
+            <div class="card-header">
+                <h3 class="card-title">Procesar devolución</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="nav-icon fas fa-undo"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- SECCION FORMULARIO -->
+                @using (Html.BeginForm("Add", "Devoluciones", FormMethod.Post, new { @class = "needs-validation", @id = "DevolucionForm", @novalidate = "novalidate" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                @Html.Label("ProductoID", "Selecciona el tipo de producto:")
+                                @Html.DropDownList("ProductoID", ViewBag.Productos as SelectList, new { @class = "form-control select2 select2-danger", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                @Html.Label("Comentario", "Ingresar comentario de devolución:")
+                                @Html.TextBox("Comentario", "", new { @class = "form-control", @type = "text", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <div>
+                                    <label>Fecha y hora actual:</label><br>
+                                    <span id="spanFechaActual">@DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")</span>
+                                </div>
+                                <input type="hidden" id="FechaDevolucion" name="FechaDevolucion" value="@DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-left">
+                            <a href="@Url.Action("Index", "Devoluciones")" class="btn btn-secondary mt-3"><i class="fas fa-times"></i> Cancelar</a>
+                            <button type="submit" class="btn btn-success mt-3"><i class="fas fa-save"></i> Guardar</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
